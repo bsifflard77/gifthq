@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+:root {
+  /* GiftHQ Brand Colors - Official Brand Identity Kit (Feb 2026) */
+  
+  /* Primary: Navy/Slate (Magnifying Glass) */
+  --color-navy: #3D4F5F;           /* Primary navy slate */
+  --color-navy-light: #4A5D6E;     /* Lighter slate */
+  --color-navy-dark: #2D3D4B;      /* Darker slate */
+  
+  /* Accent: Gift Red (Gift Box) */
+  --color-gift-red: #E74C3C;       /* Gift box red */
+  --color-gift-red-light: #EC6B5E; /* Lighter red */
+  --color-gift-red-dark: #C0392B;  /* Darker red */
+  
+  /* Accent: Gold (Ribbon) */
+  --color-ribbon: #F4C430;         /* Gold ribbon */
+  --color-ribbon-light: #F7D154;   /* Lighter gold */
+  --color-ribbon-dark: #D4A912;    /* Darker gold */
+  
+  /* Semantic Colors */
+  --color-success: #26DE81;        /* Green for "bought" status */
+  --color-warning: #F4C430;        /* Gold for "in cart" */
+  --color-info: #4ECDC4;           /* Teal for "ideas" */
+  
+  /* Backgrounds */
+  --color-background: #FFF9F5;     /* Soft warm cream (brand kit) */
+  --color-surface: #FFFFFF;        /* White cards */
+  --color-text: #3D4F5F;           /* Navy text */
+  --color-text-muted: #5A6C7D;     /* Muted navy */
+  
+  /* Spacing */
+  --radius: 1rem;
+  --radius-lg: 1.5rem;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Better focus states */
+*:focus-visible {
+  outline: 2px solid var(--color-navy);
+  outline-offset: 2px;
+}
+
+/* Card hover effect */
+.card-hover {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+}
