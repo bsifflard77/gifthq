@@ -66,13 +66,18 @@ export default function DashboardPage() {
   useEffect(() => {
     fetchDashboardData();
     // Load dismissed reminders
-    const saved = localStorage.getItem('gifthq_dismissed_reminders');
-    if (saved) setDismissedReminders(new Set(JSON.parse(saved)));
+    try {
+      const saved = localStorage.getItem('gifthq_dismissed_reminders');
+      if (saved) setDismissedReminders(new Set(JSON.parse(saved)));
+    } catch (e) {
+      // localStorage not available (private browsing, etc.)
+    }
   }, []);
 
   const fetchDashboardData = async () => {
+    try {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    if (!user) { setLoading(false); return; }
 
     setUserName(user.user_metadata?.full_name?.split(' ')[0] || user.email?.split('@')[0] || 'there');
 
@@ -213,6 +218,10 @@ export default function DashboardPage() {
     });
 
     setLoading(false);
+    } catch (err) {
+      console.error('Dashboard data fetch error:', err);
+      setLoading(false);
+    }
   };
 
   const dismissReminder = (id: string) => {

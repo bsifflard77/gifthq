@@ -27,6 +27,7 @@ export default function ScanPage() {
   const [manualCode, setManualCode] = useState('');
   const scannerRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const mountedRef = useRef(true);
 
   const startScanner = async () => {
     setError(null);
@@ -35,43 +36,131 @@ export default function ScanPage() {
     
     try {
       // Dynamically import to avoid SSR issues
-      const { Html5Qrcode } = await import('html5-qrcode');
+      const { Html5Qrcode, Html5QrcodeSupportedFormats } = await import('html5-qrcode');
       
       if (scannerRef.current) {
-        await scannerRef.current.stop();
+        try {
+          await scannerRef.current.stop();
+        } catch (e) {
+          // Ignore stop errors from previous instance
+        }
+        scannerRef.current = null;
       }
 
-      const scanner = new Html5Qrcode('scanner-container');
+      // Wait for DOM to be ready and container to have dimensions
+      await new Promise(resolve => setTimeout(resolve, 300));
+
+      const container = document.getElementById('scanner-container');
+      if (!container) {
+        setError('Scanner container not found. Please refresh and try again.');
+        return;
+      }
+
+      // Verify container has dimensions
+      const rect = container.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) {
+        console.warn('Scanner container has zero dimensions, forcing size');
+        container.style.width = '100%';
+        container.style.minHeight = '300px';
+        // Wait for reflow
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+
+      // Configure barcode formats explicitly — without this, only QR codes are scanned
+      const formatsToSupport = [
+        Html5QrcodeSupportedFormats.UPC_A,
+        Html5QrcodeSupportedFormats.UPC_E,
+        Html5QrcodeSupportedFormats.EAN_13,
+        Html5QrcodeSupportedFormats.EAN_8,
+        Html5QrcodeSupportedFormats.CODE_128,
+        Html5QrcodeSupportedFormats.CODE_39,
+        Html5QrcodeSupportedFormats.CODE_93,
+        Html5QrcodeSupportedFormats.ITF,
+        Html5QrcodeSupportedFormats.QR_CODE,
+        Html5QrcodeSupportedFormats.DATA_MATRIX,
+      ];
+
+      const scanner = new Html5Qrcode('scanner-container', {
+        formatsToSupport,
+        verbose: false,
+      });
       scannerRef.current = scanner;
 
-      await scanner.start(
-        { facingMode: 'environment' },
-        {
-          fps: 10,
-          qrbox: { width: 250, height: 150 },
-          aspectRatio: 1.777,
-        },
-        async (decodedText) => {
-          // Success - barcode scanned
-          setScannedCode(decodedText);
-          setScanning(false);
+      const scanConfig = {
+        fps: 15,
+        qrbox: { width: 280, height: 160 },
+        aspectRatio: 1.777,
+        disableFlip: false,
+      };
+
+      const onSuccess = async (decodedText: string) => {
+        // Success - barcode scanned
+        if (!mountedRef.current) return;
+        setScannedCode(decodedText);
+        setScanning(false);
+        try {
           await scanner.stop();
-          lookupProduct(decodedText);
-        },
-        () => {
-          // Ignore scan failures (continuous scanning)
+        } catch (e) {
+          // Ignore stop errors
         }
-      );
+        scannerRef.current = null;
+        if (mountedRef.current) {
+          lookupProduct(decodedText);
+        }
+      };
+
+      const onFailure = () => {
+        // Ignore scan failures (continuous scanning)
+      };
+
+      // Try back camera first, fall back to front camera for desktop
+      try {
+        await scanner.start(
+          { facingMode: 'environment' },
+          scanConfig,
+          onSuccess,
+          onFailure
+        );
+      } catch (envErr: any) {
+        console.warn('Back camera failed, trying front camera:', envErr.message);
+        try {
+          await scanner.start(
+            { facingMode: 'user' },
+            scanConfig,
+            onSuccess,
+            onFailure
+          );
+        } catch (userErr: any) {
+          console.warn('Named camera failed, trying any camera:', userErr.message);
+          // Last resort: try to get any available camera
+          const devices = await Html5Qrcode.getCameras();
+          if (devices && devices.length > 0) {
+            await scanner.start(
+              devices[0].id,
+              scanConfig,
+              onSuccess,
+              onFailure
+            );
+          } else {
+            throw new Error('No cameras found on this device.');
+          }
+        }
+      }
 
       setScanning(true);
     } catch (err: any) {
       console.error('Scanner error:', err);
-      if (err.message?.includes('Permission denied') || err.name === 'NotAllowedError') {
-        setError('Camera permission denied. Please allow camera access and try again.');
-      } else if (err.message?.includes('No camera')) {
-        setError('No camera found on this device.');
+      const msg = err?.message || String(err);
+      if (msg.includes('Permission') || msg.includes('NotAllowed') || err.name === 'NotAllowedError') {
+        setError('Camera permission denied. Please allow camera access in your browser settings and try again.');
+      } else if (msg.includes('NotFound') || msg.includes('No camera') || msg.includes('Requested device not found')) {
+        setError('No camera found on this device. Try entering the barcode manually below.');
+      } else if (msg.includes('NotReadableError') || msg.includes('Could not start video source')) {
+        setError('Camera is in use by another app. Close other camera apps and try again.');
+      } else if (msg.includes('OverconstrainedError')) {
+        setError('Camera does not support the requested settings. Try a different device.');
       } else {
-        setError('Could not start camera. Try entering the code manually below.');
+        setError(`Could not start camera: ${msg}. Try entering the code manually below.`);
       }
     }
   };
@@ -142,10 +231,18 @@ export default function ScanPage() {
   };
 
   useEffect(() => {
+    mountedRef.current = true;
     return () => {
-      // Cleanup on unmount
+      // Cleanup on unmount — prevent state updates and stop camera
+      mountedRef.current = false;
       if (scannerRef.current) {
-        scannerRef.current.stop().catch(() => {});
+        const scanner = scannerRef.current;
+        scannerRef.current = null;
+        try {
+          scanner.stop().catch(() => {});
+        } catch (e) {
+          // Ignore any cleanup errors
+        }
       }
     };
   }, []);
@@ -172,11 +269,12 @@ export default function ScanPage() {
       {!scannedCode && (
         <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
           {/* Camera View */}
-          <div className="relative bg-black aspect-[16/10]">
+          <div className="relative bg-black" style={{ width: '100%', minHeight: '300px', aspectRatio: '16/10' }}>
             <div
               id="scanner-container"
               ref={containerRef}
-              className="w-full h-full"
+              className="absolute inset-0"
+              style={{ width: '100%', height: '100%', minHeight: '300px' }}
             />
             
             {!scanning && (
@@ -347,6 +445,13 @@ export default function ScanPage() {
             >
               🔍 Find More Deals
             </button>
+          </div>
+
+          {/* Demo Notice */}
+          <div className="px-4 py-2 bg-amber-50 border-t border-amber-100 text-center">
+            <p className="text-xs text-amber-700">
+              🧪 Demo mode — showing sample data. Real product lookups coming soon!
+            </p>
           </div>
 
           {/* Scan Another */}

@@ -94,6 +94,95 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Mother's Day Campaign Section */}
+      <section className="bg-gradient-to-br from-[#F3E5F5] via-[#FFF0F5] to-[#FCE4EC] py-16 border-y-2 border-purple-100">
+        <div className="container mx-auto px-6">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="inline-flex items-center bg-gradient-to-r from-[#9C27B0] to-[#E91E8C] text-white px-6 py-3 rounded-full text-sm font-semibold mb-6 shadow-lg">
+              <span className="mr-2">💐</span>
+              Mother&apos;s Day — May 11, 2026
+              <span className="ml-2">💐</span>
+            </div>
+
+            <h2 className="text-4xl md:text-5xl font-bold text-[#2D1B35] mb-4 leading-tight">
+              Find the Perfect Gift
+              <span className="text-transparent bg-gradient-to-r from-[#9C27B0] to-[#E91E8C] bg-clip-text block mt-1">
+                for Every Mom
+              </span>
+              <span className="text-[#6B46C1] text-2xl md:text-3xl block mt-2">
+                in Under a Minute
+              </span>
+            </h2>
+
+            <p className="text-xl text-[#5A4C68] mb-8 max-w-2xl mx-auto leading-relaxed">
+              25 handpicked gifts for Mom — whether it&apos;s from the kids, from her partner, or a luxury treat she truly deserves.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+              <a
+                href="/mothers-day"
+                className="group bg-gradient-to-r from-[#9C27B0] to-[#E91E8C] text-white px-8 py-4 rounded-full text-lg font-semibold hover:from-[#7B1FA2] hover:to-[#C2185B] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center"
+              >
+                <span className="mr-2">💐</span>
+                Browse Mother&apos;s Day Gifts
+                <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+              </a>
+              <a
+                href="/mothers-day#luxury"
+                className="bg-white text-[#9C27B0] px-8 py-4 rounded-full text-lg font-semibold border-2 border-[#9C27B0] hover:bg-[#F3E5F5] transition-all duration-300 flex items-center justify-center shadow-md hover:shadow-lg"
+              >
+                <span className="mr-2">✨</span>
+                Luxury Picks
+              </a>
+            </div>
+
+            {/* Gift Categories */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+              <a href="/mothers-day#for-mom" className="bg-white/80 backdrop-blur p-4 rounded-xl hover:bg-white transition-colors duration-300 border border-purple-100 hover:border-[#9C27B0]/30 hover:shadow-lg cursor-pointer transform hover:-translate-y-1">
+                <div className="text-2xl mb-2">👩</div>
+                <div className="font-semibold text-[#2D1B35] text-sm">For Mom</div>
+              </a>
+              <a href="/mothers-day#from-kids" className="bg-white/80 backdrop-blur p-4 rounded-xl hover:bg-white transition-colors duration-300 border border-purple-100 hover:border-[#9C27B0]/30 hover:shadow-lg cursor-pointer transform hover:-translate-y-1">
+                <div className="text-2xl mb-2">👧</div>
+                <div className="font-semibold text-[#2D1B35] text-sm">From Kids</div>
+              </a>
+              <a href="/mothers-day#budget" className="bg-white/80 backdrop-blur p-4 rounded-xl hover:bg-white transition-colors duration-300 border border-purple-100 hover:border-[#9C27B0]/30 hover:shadow-lg cursor-pointer transform hover:-translate-y-1">
+                <div className="text-2xl mb-2">💚</div>
+                <div className="font-semibold text-[#2D1B35] text-sm">Under $40</div>
+              </a>
+              <a href="/mothers-day#luxury" className="bg-white/80 backdrop-blur p-4 rounded-xl hover:bg-white transition-colors duration-300 border border-purple-100 hover:border-[#9C27B0]/30 hover:shadow-lg cursor-pointer transform hover:-translate-y-1">
+                <div className="text-2xl mb-2">✨</div>
+                <div className="font-semibold text-[#2D1B35] text-sm">Luxury</div>
+              </a>
+            </div>
+
+            <a href="/mothers-day" className="block bg-white/60 backdrop-blur rounded-2xl p-6 border border-purple-100 hover:bg-white/80 transition-colors duration-300 hover:shadow-lg">
+              <div className="flex items-center justify-center mb-4">
+                <div className="flex items-center gap-2 text-[#9C27B0] font-semibold">
+                  <span>💐</span>
+                  <span>Mother&apos;s Day Gift Guide — 25 Ideas for Every Budget</span>
+                  <span>💐</span>
+                </div>
+              </div>
+              <div className="grid md:grid-cols-3 gap-4 text-sm text-[#5A4C68]">
+                <div className="flex items-center justify-center">
+                  <span className="mr-2">💝</span>
+                  <span>Heartfelt gifts from the kids</span>
+                </div>
+                <div className="flex items-center justify-center">
+                  <span className="mr-2">💆‍♀️</span>
+                  <span>Spa & relaxation picks</span>
+                </div>
+                <div className="flex items-center justify-center">
+                  <span className="mr-2">🎁</span>
+                  <span>Budget to luxury options</span>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* Problem Section */}
       <section className="bg-white py-16">
         <div className="container mx-auto px-6">

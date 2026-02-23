@@ -14,13 +14,13 @@ export const metadata: Metadata = {
     description: "Plan gifts, track budgets, share wish lists. Never buy a duplicate gift again.",
     type: "website",
     url: "https://gifthq.ai",
-    images: ["/og-image-v2.jpg"],
+    images: ["/og-image-v4.jpg"],
   },
   twitter: {
     card: "summary_large_image",
     title: "GiftHQ - Your Gift Command Center",
     description: "Plan gifts, track budgets, share wish lists. Never buy a duplicate gift again.",
-    images: ["/og-image-v2.jpg"],
+    images: ["/og-image-v4.jpg"],
   },
   appleWebApp: {
     capable: true,
