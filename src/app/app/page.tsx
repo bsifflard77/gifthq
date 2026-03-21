@@ -258,8 +258,68 @@ export default function DashboardPage() {
 
   const activeReminders = stats.occasionReminders.filter(r => !dismissedReminders.has(r.id));
 
+  // Mother's Day countdown
+  const mothersDayDate = new Date('2026-05-10T00:00:00');
+  const today2 = new Date();
+  const daysUntilMothersDay = Math.ceil((mothersDayDate.getTime() - today2.getTime()) / (1000 * 60 * 60 * 24));
+  const showMothersDayBanner = daysUntilMothersDay > 0 && daysUntilMothersDay <= 90;
+
+  const featuredMothersDayGifts = [
+    { emoji: '💍', name: 'Custom Name Necklace', price: '$40–100', url: 'https://www.amazon.com/s?k=custom+name+necklace+personalized&tag=gifthq00-20' },
+    { emoji: '🛁', name: 'Luxury Spa Set', price: '$60–120', url: 'https://www.amazon.com/s?k=luxury+bathrobe+spa+gift+set+women&tag=gifthq00-20' },
+    { emoji: '📸', name: 'Custom Family Portrait', price: '$50–150', url: 'https://www.amazon.com/s?k=custom+family+portrait+personalized&tag=gifthq00-20' },
+    { emoji: '🌿', name: 'Herb Garden Kit', price: '$30–60', url: 'https://www.amazon.com/s?k=indoor+herb+garden+starter+kit&tag=gifthq00-20' },
+    { emoji: '👧', name: 'Handprint Art Kit', price: '$25–50', url: 'https://www.amazon.com/s?k=kids+handprint+art+kit+clay&tag=gifthq00-20' },
+    { emoji: '🍵', name: 'Gourmet Tea Set', price: '$25–45', url: 'https://www.amazon.com/s?k=gourmet+tea+gift+set+mothers+day&tag=gifthq00-20' },
+  ];
+
   return (
     <div className="space-y-6">
+      {/* Mother's Day Banner */}
+      {showMothersDayBanner && (
+        <div className="bg-gradient-to-r from-[#C2185B] to-[#E91E8C] rounded-2xl p-6 text-white relative overflow-hidden">
+          <div className="absolute right-4 top-0 text-7xl opacity-20 leading-none select-none">💐</div>
+          <div className="relative z-10">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-2xl">💐</span>
+              <span className="text-sm font-semibold uppercase tracking-widest text-pink-200">Mother&apos;s Day</span>
+            </div>
+            <h2 className="text-2xl font-black mb-1">
+              {daysUntilMothersDay === 1 ? "Tomorrow is Mother's Day!" : `${daysUntilMothersDay} days until Mother's Day`}
+            </h2>
+            <p className="text-pink-100 text-sm mb-4">
+              {daysUntilMothersDay <= 7 
+                ? "Last chance — these all ship fast on Amazon! 🚀"
+                : daysUntilMothersDay <= 21
+                ? "Personalized gifts need time to arrive — order this week!"
+                : "Start early and give her something she'll actually love."}
+            </p>
+            {/* Featured gift ideas */}
+            <div className="grid grid-cols-3 gap-2 mb-4">
+              {featuredMothersDayGifts.map((gift, i) => (
+                <a
+                  key={i}
+                  href={gift.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-white/15 hover:bg-white/25 transition rounded-xl p-3 text-center backdrop-blur-sm border border-white/20"
+                >
+                  <div className="text-2xl mb-1">{gift.emoji}</div>
+                  <div className="text-xs font-semibold text-white leading-tight">{gift.name}</div>
+                  <div className="text-xs text-pink-200 mt-1">{gift.price}</div>
+                </a>
+              ))}
+            </div>
+            <a
+              href="/mothers-day"
+              className="inline-flex items-center gap-2 bg-white text-[#C2185B] font-bold px-5 py-2.5 rounded-full hover:bg-pink-50 transition text-sm"
+            >
+              See All 25 Gift Ideas →
+            </a>
+          </div>
+        </div>
+      )}
+
       {/* Welcome Header */}
       <div className="bg-gradient-to-r from-[#3D4F5F] to-[#4A5D6E] rounded-2xl p-6 text-white">
         <h1 className="text-2xl font-bold mb-2">Hey {userName}! 👋</h1>
